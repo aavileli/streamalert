@@ -24,9 +24,9 @@ import time
 
 import boto3
 from moto import mock_s3
-from stream_alert.handler import StreamAlert
+from stream_alert.rule_processor.handler import StreamAlert
 # import all rules loaded from the main handler
-import main
+import stream_alert.rule_processor.main
 
 LOGGER_SA = logging.getLogger('StreamAlert')
 LOGGER_CLI = logging.getLogger('StreamAlertCLI')
