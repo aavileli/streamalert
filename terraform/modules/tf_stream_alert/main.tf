@@ -6,10 +6,11 @@ resource "aws_lambda_function" "streamalert_rule_processor" {
   runtime       = "python2.7"
   role          = "${aws_iam_role.streamalert_rule_processor_role.arn}"
   handler       = "${lookup(var.rule_processor_config, "handler")}"
-  memory_size   = "${element(var.rule_processor_lambda_config, 1)}"
-  timeout       = "${element(var.rule_processor_lambda_config, 0)}"
+  memory_size   = "${element(var.rule_processor_lambda_config["${var.cluster}"], 1)}"
+  timeout       = "${element(var.rule_processor_lambda_config["${var.cluster}"], 0)}"
   s3_bucket     = "${lookup(var.rule_processor_config, "source_bucket")}"
   s3_key        = "${lookup(var.rule_processor_config, "source_object_key")}"
+  publish       = true
 }
 
 // StreamAlert Processor Production Alias
@@ -17,21 +18,22 @@ resource "aws_lambda_alias" "rule_processor_production" {
   name             = "production"
   description      = "Production StreamAlert Rule Processor Alias"
   function_name    = "${aws_lambda_function.streamalert_rule_processor.arn}"
-  function_version = "${var.rule_processor_prod_version}"
+  function_version = "${aws_lambda_function.streamalert_rule_processor.version}"
 }
 
-// AWS Lambda Function: StreamAlert Output Processor
+// AWS Lambda Function: StreamAlert Alert Processor
 //    Send alerts to declared outputs
 resource "aws_lambda_function" "streamalert_alert_processor" {
   function_name = "${var.prefix}_${var.cluster}_streamalert_alert_processor"
-  description   = "StreamAlert Output Processor"
+  description   = "StreamAlert Alert Processor"
   runtime       = "python2.7"
   role          = "${aws_iam_role.streamalert_alert_processor_role.arn}"
   handler       = "${lookup(var.alert_processor_config, "handler")}"
-  memory_size   = "${element(var.alert_processor_lambda_config, 1)}"
-  timeout       = "${element(var.alert_processor_lambda_config, 0)}"
+  memory_size   = "${element(var.alert_processor_lambda_config["${var.cluster}"], 1)}"
+  timeout       = "${element(var.alert_processor_lambda_config["${var.cluster}"], 0)}"
   s3_bucket     = "${lookup(var.alert_processor_config, "source_bucket")}"
   s3_key        = "${lookup(var.alert_processor_config, "source_object_key")}"
+  publish       = true
 }
 
 // StreamAlert Output Processor Production Alias
@@ -39,7 +41,7 @@ resource "aws_lambda_alias" "alert_processor_production" {
   name             = "production"
   description      = "Production StreamAlert Alert Processor Alias"
   function_name    = "${aws_lambda_function.streamalert_alert_processor.arn}"
-  function_version = "${var.alert_processor_prod_version}"
+  function_version = "${aws_lambda_function.streamalert_alert_processor.version}"
 }
 
 // Allow SNS to invoke the StreamAlert Output Processor

@@ -55,14 +55,12 @@ class CLIConfig(object):
         'account',
         'alert_processor_config',
         'alert_processor_lambda_config',
-        'alert_processor_versions',
         'clusters',
         'firehose',
         'flow_log_config',
         'kinesis_streams_config',
         'rule_processor_config',
         'rule_processor_lambda_config',
-        'rule_processor_versions',
         'terraform'
     }
 
@@ -73,14 +71,16 @@ class CLIConfig(object):
             self.config = self._convert_schema()
             self.version = self.detect_version()
 
+    def __repr__(self):
+        return json.dumps(self.config)
+
     def __getitem__(self, key):
         return self.config[key]
 
     def __setitem__(self, key, new_value):
-        try:
-            self.config[key] = new_value
-        finally:
-            self.write()
+        self.config[key] = new_value
+        # TODO(jack) investigate why self.write() doesn't work as expected
+        # self.write()
 
     def get(self, key):
         return self.config.get(key)
@@ -138,7 +138,7 @@ class CLIConfig(object):
         new_config = defaultdict(dict)
         new_config['account'] = {
             'aws_account_id': self.config['account_id'],
-            'prefix': self.config['prefix'],
+            'prefix': self.config['account']['prefix'],
             'kms_key_alias': self.config['kms_key_alias'],
             'region': self.config['region']
         }

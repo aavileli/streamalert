@@ -124,8 +124,6 @@ def terraform_runner(options):
         ]
         tf_runner(targets=init_targets, refresh_state=False)
 
-        os._exit(0)
-
         logging.info('Deploying Lambda Functions')
         # setup remote state
         refresh_tf_state()
@@ -324,22 +322,12 @@ def deploy(options):
             version=rule_processor_version
         ).create_and_upload()
 
-        LambdaVersion(
-            config=CONFIG,
-            package=package
-        ).publish_function()
-
     def deploy_alert_processor():
         """Create Alert Processor package and publish versions"""
         package = AlertProcessorPackage(
             config=CONFIG,
             version=alert_processor_version
         ).create_and_upload()
-
-        LambdaVersion(
-            config=CONFIG,
-            package=package
-        ).publish_function()
 
     if processor == 'rule':
         deploy_rule_processor()

@@ -48,7 +48,7 @@ class LambdaVersion(object):
         for cluster, region in self.config['clusters'].iteritems():
             client = boto3.client('lambda', region_name=region)
             function_name = '{}_{}_streamalert_processor_{}'.format(
-                self.config['prefix'],
+                self.config['account']['prefix'],
                 cluster,
                 self.package.package_name
             )

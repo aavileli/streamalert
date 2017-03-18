@@ -68,6 +68,7 @@ class LambdaPackage(object):
             # make all config changes here
             self.config[self.config_key]['source_object_key'] = full_package_name
             self.config[self.config_key]['source_current_hash'] = package_sha256
+            self.config.write()
 
     def _get_tmpdir(self):
         """Generate a temporary directory and package name
@@ -192,7 +193,7 @@ class LambdaPackage(object):
             package_fh = open(package_file, 'r')
             try:
                 client.put_object(
-                    Bucket=self.config['lambda_source_bucket_name'],
+                    Bucket=self.config[self.config_key]['source_bucket'],
                     Key=os.path.join(self.package_name, package_name),
                     Body=package_fh,
                     ServerSideEncryption='AES256'
@@ -209,7 +210,7 @@ class LambdaPackage(object):
 class RuleProcessorPackage(LambdaPackage):
     """Deployment package class for the StreamAlert Rule Processor function"""
     package_folders = {'stream_alert/rule_processor', 'rules', 'conf'}
-    package_files = {'variables.json'}
+    package_files = {'stream_alert/__init__.py', 'variables.json'}
     package_root_dir = '.'
     package_name = 'rule_processor'
     config_key = 'rule_processor_config'
@@ -218,7 +219,7 @@ class RuleProcessorPackage(LambdaPackage):
 class AlertProcessorPackage(LambdaPackage):
     """Deployment package class for the StreamAlert Alert Processor function"""
     package_folders = {'stream_alert/alert_processor'}
-    package_files = {}
+    package_files = {'stream_alert/__init__.py'}
     package_root_dir = '.'
     package_name = 'alert_processor'
     config_key = 'alert_processor_config'

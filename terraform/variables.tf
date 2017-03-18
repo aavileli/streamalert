@@ -8,11 +8,6 @@ variable "alert_processor_config" {
   default = {}
 }
 
-variable "alert_processor_versions" {
-  type = "map"
-  default = {}
-}
-
 variable "alert_processor_lambda_config" {
   type = "map"
   default = {}
@@ -39,11 +34,6 @@ variable "kinesis_streams_config" {
 }
 
 variable "rule_processor_config" {
-  type = "map"
-  default = {}
-}
-
-variable "rule_processor_versions" {
   type = "map"
   default = {}
 }

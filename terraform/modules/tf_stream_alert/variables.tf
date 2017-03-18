@@ -28,10 +28,6 @@ variable "rule_processor_lambda_config" {
   default = {}
 }
 
-variable "rule_processor_prod_version" {
-  type = "string"
-}
-
 variable "alert_processor_config" {
   type = "map"
   default = {}
@@ -40,8 +36,4 @@ variable "alert_processor_config" {
 variable "alert_processor_lambda_config" {
   type = "map"
   default = {}
-}
-
-variable "alert_processor_prod_version" {
-  type = "string"
 }
